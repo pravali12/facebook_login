@@ -4,6 +4,11 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
+const passport = require('passport');
+const  session = require('express-session');
+const  subdomain = require('express-subdomain');
+
+
 const app = express();
 const router = express.Router();
 
@@ -16,6 +21,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+	secret: 'keyboard cat',
+	resave: false,
+	saveUninitialized: false
+  }));
+  
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Middleware
 app.use('/', router);
@@ -26,30 +39,13 @@ router.use((req, res, next)=> {
     next();
 });
 
-app.get("/getlogin",function(req,res){
-
-    res.render("login");
-
-});
-app.get("/addcart",function(req,res){
-
-    res.render("addcart");
-
-});
 
 //Route variables
-const index = require('./routes/index');
-// const products= require('./routes/product/api');
-// const plans = require('./routes/plans/api');
-// const orders= require('./routes/order/api');
-// const cart= require('./routes/cart/api');
-const users= require('./routes/user/api');
+
+const facebook= require('./routes/user/api');
 //Routing
-app.use('/',index);
-// app.use('/api/products',products);
-// app.use('/api/plans',plans);
-// app.use('/api/orders',orders);
-// app.use('/api/cart',cart);
-app.use('/api/users',users);
+//app.use('/',index);
+app.use(subdomain('*', facebook));
+//app.use('/',facebook);
 
 module.exports = app;

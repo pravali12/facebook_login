@@ -2,19 +2,21 @@ const table = require('./table');
 const dynogels = require('./database').dynogels;
 
 module.exports = function (Schema, optionsObj) {
-	const tableName = optionsObj.tableName || table.tableName;
-	console.log('\nSchema tableName\n',tableName);
-	const Model = dynogels.define(tableName, Schema);
+	//const tableName = optionsObj.tableName || table.tableName;
+	//console.log('\nSchema tableName\n',tableName);
+	const Model = dynogels.define("Model", Schema);
 	const selectTable = (name)=>{
+		console.log("table name: "+name);
 		Model.config({tableName: name});
 	};
 
 	// //CRUD operations for Models
 	// we can pass an array of items and they will all be created
 	const createItem = (params, optionsObj, callback) => {
-		const localTable = optionsObj.table || tableName;
+
+		const localTable = optionsObj.tableName;
 		const createCallback = ()=> {
-			selectTable(localTable);
+			//selectTable(localTable);
 			Model.create(params, {overwrite:optionsObj.overwrite || false}, 
 				(err, createdData) => { //{overwrite:false} to not overwrite existing records
 				if (err) console.log('\nItem creation err\n', err);
